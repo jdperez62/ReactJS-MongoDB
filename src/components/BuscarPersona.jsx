@@ -36,8 +36,8 @@ function BuscarPersona({ onEditarPersona }) {
       <ul>
         {resultados.map((persona) => (
           <li key={persona._id}>
-            {persona.nombre} {persona.apellidos} - {persona.identificacion}
-            <button onClick={() => onEditarPersona(persona)}>Editar</button>
+            Nombre: {persona.nombre} {persona.apellidos}.  CI: {persona.identificacion}. Ciudad: {persona.ciudadResidencia}
+            <button className="edit-button" onClick={() => onEditarPersona(persona)}>Editar</button>
           </li>
         ))}
       </ul>
