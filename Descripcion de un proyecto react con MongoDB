@@ -1,0 +1,181 @@
+Apuntes sobre como hice para lograr que una aplicacion web pasara los datos de un formulario a una BD mongoDB que esta corriendo en una imagen docker por el puerto 27017.
+
+1. Se creo el proyecto reactjs.
+   npm create vite@latest mi-aplicacion-personas --template react
+   cd mi-aplicacion-personas
+   npm install
+   npm run dev.
+   
+2. Para la imagen de mongoDB
+   Descargue una imagen docker de mongoDB desde nexus-3 "docker pull nexus-3.datys.cu:52007/mongo:4.4.0"
+   Comprobar que se bajó "docker images"
+     REPOSITORY                               TAG       IMAGE ID       CREATED        SIZE
+nexus-3.datys.cu:52007/grafana/grafana   10.4.2    679e4be9f918   5 months ago   429MB
+172.29.8.30:5023/prom/prometheus         v2.26.0   6d6859d1a42a   3 years ago    169MB
+nexus-3.datys.cu:52007/mongo             4.4.0     409c3f937574   4 years ago    493MB
+172.29.8.30:5023/prom/alertmanager       v0.21.0   c876f5897d7b   4 years ago    55.5MB
+
+   levante un contenedor con esa imagen:  "docker run --name mongodb -p 27017:27017 -d 409c3f937574"
+   
+   Se creo un volumen en la PC  "docker volume create mongo_data"
+   y cuando volvi a ejecutar el contenedor con ese volumen me dio error porque ya se estaba 
+   ejecutando uno on esa imagen
+   
+   entonces tuve que decir "docker stop mongodb"
+                           "docker rm mongodb"
+                           
+  Para entonces levantar con un volumen para persistir los datos.
+  
+  "docker run --name mongodb -p 27017:27017 -v mongo_data:/data/db -d 409c3f937574"   
+  
+Luego comprobé con este comando que todo estaba OK "docker exec -it mongodb mongo"  
+y esto me dejó en un promt de Mongo
+> Y aquí se probaron algunos comandos como:
+> > show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use local
+switched to db local
+> db.createCollection("nombre_de_la_coleccion")
+{ "ok" : 1 }
+> db.nombre_de_la_coleccion.insertOne({ nombre: "Ejemplo", valor: 123 })
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("66fea22745d616c8feff4331")
+}
+> db.nombre_de_la_coleccion.find()
+{ "_id" : ObjectId("66fea22745d616c8feff4331"), "nombre" : "Ejemplo", "valor" : 123 }
+> db.nombre_de_la_coleccion.updateOne({ nombre: "Ejemplo" }, { $set: { valor: 456 } })
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.nombre_de_la_coleccion.find()
+{ "_id" : ObjectId("66fea22745d616c8feff4331"), "nombre" : "Ejemplo", "valor" : 456 }
+
+*************************************   
+
+El proyecto que se creó, se le borró lo que viene por defecto de vite y se agregaron los ficheros main, app, index, etc que me dio "v0.dev"
+
+
+
+La carpeta con el proyecto está en el escritorio y se llama "mi-aplicacion-personas"
+
+Tener en cuenta que para que funcione hay que ejecutar el servidor de backend
+"node server.mjs"
+*********************************************************************
+Para el caso en que al levantar el servidor "node server.mjs"
+me diga que el puerto está ocupado
+
+sudo lsof -i :5000
+sudo kill "PID"
+
+
+************************************************************************************
+
+Luego de este comando:  "docker exec -it mongodb mongo"
+
+Para ver el contenido de una de sus bases de datos y los comandos mas usados para manipular esas bases de datos y su explicacion
+
+Para ver el contenido de una base de datos en MongoDB después de ejecutar el comando docker exec -it mongodb mongo, puedes seguir estos pasos:
+Pasos para Ver el Contenido de una Base de Datos
+
+    Conéctate a la Shell de MongoDB:
+    Al ejecutar docker exec -it mongodb mongo, ya estás dentro de la shell de MongoDB.
+    Listar las Bases de Datos:
+    Para ver las bases de datos disponibles, utiliza el comando:
+
+    javascript
+    show dbs
+
+Seleccionar una Base de Datos:
+Cambia a la base de datos que deseas explorar usando el comando use:
+
+javascript
+use nombre_de_la_base_de_datos
+
+Listar las Colecciones:
+Una vez que estés en la base de datos, puedes listar las colecciones (equivalente a tablas en SQL) con:
+
+javascript
+show collections
+
+Ver el Contenido de una Colección:
+Para ver los documentos dentro de una colección específica, usa el siguiente comando:
+
+javascript
+db.nombre_de_la_coleccion.find().pretty()
+
+    El método pretty() formatea la salida para que sea más legible.
+
+Comandos Más Usados para Manipular Bases de Datos
+Aquí tienes algunos comandos comunes que puedes usar en MongoDB, junto con sus explicaciones:
+1. Crear una Base de Datos
+Para crear o cambiar a una base de datos existente:
+
+javascript
+use nombre_de_la_base_de_datos
+Este comando crea la base de datos si no existe.
+
+2. Listar Todas las Bases de Datos
+
+show dbs
+Muestra todas las bases de datos disponibles en tu instancia.
+
+3. Crear una Colección
+
+db.createCollection("nombre_de_la_coleccion")
+
+Crea una nueva colección dentro de la base de datos actual.
+
+4. Insertar un Documento
+Para insertar un nuevo documento en una colección:
+
+db.nombre_de_la_coleccion.insertOne({ clave: "valor" })
+
+O para insertar múltiples documentos:
+
+db.nombre_de_la_coleccion.insertMany([{ clave1: "valor1" }, { clave2: "valor2" }])
+
+5. Consultar Documentos
+Para encontrar documentos en una colección:
+db.nombre_de_la_coleccion.find() // Muestra todos los documentos.
+db.nombre_de_la_coleccion.find({ clave: "valor" }) // Filtra por un criterio específico.
+
+6. Actualizar Documentos
+Para actualizar un documento existente:
+db.nombre_de_la_coleccion.updateOne({ clave: "valor" }, { $set: { clave_nueva: "nuevo_valor" } })
+
+O para actualizar múltiples documentos:
+
+db.nombre_de_la_coleccion.updateMany({ clave: "valor" }, { $set: { clave_nueva: "nuevo_valor" } })
+
+7. Eliminar Documentos
+Para eliminar un documento específico:
+db.nombre_de_la_coleccion.deleteOne({ clave: "valor" })
+
+O para eliminar múltiples documentos:
+
+db.nombre_de_la_coleccion.deleteMany({ clave: "valor" })
+
+8. Eliminar una Colección
+
+Para eliminar una colección completa:
+
+db.nombre_de_la_coleccion.drop()
+
+9. Eliminar una Base de Datos
+Para eliminar la base de datos actual:
+
+db.dropDatabase()
+
+10. Crear un Usuario (para bases de datos con autenticación)
+Para crear un nuevo usuario con permisos específicos en la base de datos actual:
+
+db.createUser({
+    user: "nombre_usuario",
+    pwd: "contraseña",
+    roles: [{ role: "readWrite", db: "nombre_de_la_base_de_datos" }]
+})
+
+
+   
+   
