@@ -17,11 +17,19 @@ function App() {
     <div className="App">
       <h1>Gestión de Personas</h1>
       <div>
-        <button onClick={() => cambiarVista("formulario")}>Agregar Persona</button>
-        <button onClick={() => cambiarVista("buscar")}>Buscar Persona</button>
+        <button className="btn" onClick={() => cambiarVista("formulario")}>
+          Agregar Persona
+        </button>
+        <button className="btn" onClick={() => cambiarVista("buscar")}>
+          Buscar Persona
+        </button>
       </div>
       {vista === "formulario" && <FormularioPersona />}
-      {vista === "buscar" && (<BuscarPersona onEditarPersona={(persona) => cambiarVista("editar", persona)}/>)}
+      {vista === "buscar" && (
+        <BuscarPersona
+          onEditarPersona={(persona) => cambiarVista("editar", persona)}
+        />
+      )}
       {vista === "editar" && personaSeleccionada && (
         <EditarPersona
           persona={personaSeleccionada}

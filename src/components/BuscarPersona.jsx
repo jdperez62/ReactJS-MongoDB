@@ -26,6 +26,7 @@ function BuscarPersona({ onEditarPersona }) {
     <div>
       <form onSubmit={handleSearch}>
         <input
+          className="nombre"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           placeholder="Buscar persona..."

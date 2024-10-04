@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./FormularioPersona.css"
 
 function FormularioPersona() {
   const [persona, setPersona] = useState({
@@ -59,6 +60,7 @@ function FormularioPersona() {
   return (
     <form onSubmit={handleSubmit}>
       <input
+        className="nombre"
         name="nombre"
         value={persona.nombre}
         onChange={handleChange}
@@ -66,6 +68,7 @@ function FormularioPersona() {
         required
       />
       <input
+        className="nombre"
         name="apellidos"
         value={persona.apellidos}
         onChange={handleChange}
@@ -73,6 +76,7 @@ function FormularioPersona() {
         required
       />
       <input
+        className="nombre"
         name="identificacion"
         value={persona.identificacion}
         onChange={handleChange}
@@ -80,6 +84,7 @@ function FormularioPersona() {
         required
       />
       <input
+        className="nombre"
         name="fechaNacimiento"
         value={persona.fechaNacimiento}
         onChange={handleChange}
@@ -87,6 +92,7 @@ function FormularioPersona() {
         required
       />
       <input
+        className="nombre"
         name="ciudadResidencia"
         value={persona.ciudadResidencia}
         onChange={handleChange}
@@ -94,6 +100,7 @@ function FormularioPersona() {
         required
       />
       <input
+        className="nombre"
         name="pais"
         value={persona.pais}
         onChange={handleChange}
@@ -101,6 +108,7 @@ function FormularioPersona() {
         required
       />
       <textarea
+        className="nombre"
         name="comentario"
         value={persona.comentario}
         onChange={handleChange}
